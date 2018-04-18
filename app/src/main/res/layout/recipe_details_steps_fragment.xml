@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/steps_fragment_container"
+    tools:context="com.example.katarzkubat.bakingapp.UI.RecipeDetailsActivity">
+
+    <android.support.v7.widget.RecyclerView
+        app:layoutManager="android.support.v7.widget.GridLayoutManager"
+        android:id="@+id/recipe_steps_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
+
+</FrameLayout>

@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="@dimen/widget_margin">
+
+    <TextView
+        android:layout_width="100dp"
+        android:id="@+id/widget_title_label"
+        android:text="@string/recipes_title_label"
+        android:background="@color/colorPrimary"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textAllCaps="true"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"/>
+
+    <ListView
+        android:id="@+id/widget_list"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorPrimary"
+        android:contentDescription="@string/appwidget_text"
+        tools:text="@string/appwidget_text"
+        tools:listitem="@layout/cake_widget_list_item"/>
+
+</LinearLayout>
