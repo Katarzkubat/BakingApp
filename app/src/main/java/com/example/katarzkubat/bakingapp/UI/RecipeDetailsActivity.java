@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.katarzkubat.bakingapp.Adapters.StepsAdapter;
 import com.example.katarzkubat.bakingapp.Model.Ingredients;
@@ -23,35 +24,66 @@ public class RecipeDetailsActivity extends AppCompatActivity implements RecipeSt
 
     ArrayList<Recipes> recipes;
     ArrayList<Ingredients> ingredients;
-    private boolean rTwoPane;
+    private boolean twoPane;
+    public final static String TWO_PANE = "twoPane";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
 
-        if (savedInstanceState == null) {
+        if(savedInstanceState == null) {
 
             FragmentManager fragmentManager = getSupportFragmentManager();
 
             Recipes takenRecipe = getIntent().getParcelableExtra(SINGLE_RECIPE);
+            int widgetPosition = getIntent().getIntExtra("widgetPosition", -1);
 
-            Bundle singleRecipe = new Bundle();
+            Bundle bundle = new Bundle();
 
-            singleRecipe.putParcelable(SINGLE_RECIPE, takenRecipe);
+            bundle.putParcelable(SINGLE_RECIPE, takenRecipe);
+            bundle.putBoolean(TWO_PANE, true);
 
-            IngredientsFragment ingredientsFragment = new IngredientsFragment();
-            ingredientsFragment.setArguments(singleRecipe);
+            /*if(widgetPosition > -1) {
+              findViewById(R.id.step_detailed_container).setVisibility(View.INVISIBLE);
+              //findViewById(R.id.ingredients_fragment_container).setMinimumHeight(400);
+            } */
 
-            RecipeStepsFragment recipeStepsFragment = new RecipeStepsFragment();
-            recipeStepsFragment.setArguments(singleRecipe);
+
+            if(findViewById(R.id.two_pane_linear_layout) != null) {
+
+                twoPane = true;
+
+                IngredientsFragment ingredientsFragment = new IngredientsFragment();
+                ingredientsFragment.setArguments(bundle);
+
+                RecipeStepsFragment recipeStepsFragment = new RecipeStepsFragment();
+                recipeStepsFragment.setArguments(bundle);
+
+                StepDetailedFragment stepDetailedFragment = new StepDetailedFragment();
+                stepDetailedFragment.setArguments(bundle);
+
+                fragmentManager.beginTransaction()
+                        .add(R.id.ingredients_fragment_container, ingredientsFragment)
+                        .add(R.id.steps_fragment_container, recipeStepsFragment)
+                        .add(R.id.step_detailed_fragment, stepDetailedFragment)
+                        .commit();
+            } else {
+
+                IngredientsFragment ingredientsFragment = new IngredientsFragment();
+                ingredientsFragment.setArguments(bundle);
+
+                RecipeStepsFragment recipeStepsFragment = new RecipeStepsFragment();
+                recipeStepsFragment.setArguments(bundle);
 
                 fragmentManager.beginTransaction()
                         .add(R.id.ingredients_fragment_container, ingredientsFragment)
                         .add(R.id.steps_fragment_container, recipeStepsFragment)
                         .commit();
+                twoPane = false;
             }
         }
+    }
 
     @Override
     public void onItemSelected(int position) {}

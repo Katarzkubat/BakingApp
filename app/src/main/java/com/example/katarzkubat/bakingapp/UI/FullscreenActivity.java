@@ -42,6 +42,7 @@ public class FullscreenActivity extends AppCompatActivity {
     public static final String CHOSEN_STEP_POSITION = "position";
     public static final String STEPS = "steps";
     public static final String CURRENT_STEP = "currentStep";
+    public final static String TWO_PANE = "twoPane";
 
     @BindView(R.id.step_details_player_fullscreen)
     SimpleExoPlayerView mPlayerView;

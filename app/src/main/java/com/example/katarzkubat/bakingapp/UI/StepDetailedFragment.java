@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.katarzkubat.bakingapp.Model.Recipes;
 import com.example.katarzkubat.bakingapp.Model.Steps;
 import com.example.katarzkubat.bakingapp.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -43,6 +44,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.example.katarzkubat.bakingapp.Adapters.RecipesAdapter.SINGLE_RECIPE;
+
 public class StepDetailedFragment extends Fragment implements ExoPlayer.EventListener {
 
     private SimpleExoPlayer mExoPlayer;
@@ -54,45 +57,64 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
     private Steps currentStep;
     private long movieCurrentPosition;
     private int position;
+
     public static final String CURRENT_POSITION = "movieCurrentPosition";
     public static final String CHOSEN_STEP_POSITION = "position";
     public static final String STEPS = "steps";
     public static final String CURRENT_STEP = "currentStep";
+    public final static String TWO_PANE = "twoPane";
 
-    private Unbinder unbinder;
-    @BindView(R.id.step_details_button_next) Button nextButton;
-    @BindView(R.id.step_details_button_previous)Button previousButton;
-    @BindView(R.id.step_details_description) TextView description;
-    @BindView(R.id.step_details_player) SimpleExoPlayerView mPlayerView;
-    @BindView(R.id.cake_image) ImageView image;
-    @BindDrawable(R.drawable.cake) Drawable cakeDrawable;
+    @BindView(R.id.step_details_button_next)
+    Button nextButton;
+    @BindView(R.id.step_details_button_previous)
+    Button previousButton;
+    @BindView(R.id.step_details_description)
+    TextView description;
+    @BindView(R.id.step_details_player)
+    SimpleExoPlayerView mPlayerView;
+    @BindView(R.id.cake_image)
+    ImageView image;
+    @BindDrawable(R.drawable.cake)
+    Drawable cakeDrawable;
 
-    public StepDetailedFragment() {}
+    public StepDetailedFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+       /* if(savedInstanceState != null){
+            movieCurrentPosition = savedInstanceState.getLong(CURRENT_POSITION);
+            position = savedInstanceState.getInt(CHOSEN_STEP_POSITION);
+        } */
 
         //przy rotowaniu pozycja cofa się o 1 - jak jest zdjęcie
         //film cofa się do 0  - trzymanie pozycji filmu
 
         View rootView = inflater.inflate(R.layout.step_detailed_fragment, container, false);
+        Recipes recipe = getArguments().getParcelable(SINGLE_RECIPE);
+        boolean twoPane = getArguments().getBoolean(TWO_PANE);
 
-        position = getArguments().getInt(CHOSEN_STEP_POSITION);
-        steps = getArguments().getParcelableArrayList(STEPS);
-        movieCurrentPosition = getArguments().getLong(CURRENT_POSITION,0);
-
+        if (!twoPane) {
+            position = getArguments().getInt(CHOSEN_STEP_POSITION);
+            steps = getArguments().getParcelableArrayList(STEPS);
+        } else {
+            position = 0;
+            steps = recipe.getSteps();
+        }
         currentStep = steps.get(position);
 
-        unbinder = ButterKnife.bind(this, rootView);
+        movieCurrentPosition = getArguments().getLong(CURRENT_POSITION, 0);
 
-       // Button nextButton = (Button) rootView.findViewById(R.id.step_details_button_next);
+        Unbinder unbinder = ButterKnife.bind(this, rootView);
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 nextStep(position);
             }
         });
-      //  Button previousButton = (Button) rootView.findViewById(R.id.step_details_button_previous);
+
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,13 +122,11 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
             }
         });
 
-       // TextView description = (TextView) rootView.findViewById(R.id.step_details_description);
         description.setText(currentStep.getDescription());
 
-      //  mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.step_details_player);
         if (!currentStep.getVideo().isEmpty()) {
             initializePlayer(Uri.parse(currentStep.getVideo()));
-        } else if(!currentStep.getThumbnailUrl().isEmpty()) {
+        } else if (!currentStep.getThumbnailUrl().isEmpty()) {
             initializePlayer(Uri.parse(currentStep.getThumbnailUrl()));
         } else {
             mPlayerView.setVisibility(View.INVISIBLE);
@@ -119,6 +139,13 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
 
         return rootView;
     }
+
+  /*  @Override
+    public void onSaveInstanceState(Bundle currentState) {
+        super.onSaveInstanceState(currentState);
+        currentState.putLong(CURRENT_POSITION, movieCurrentPosition);
+        currentState.putInt(CHOSEN_STEP_POSITION, position);
+    } */
 
     private void initializePlayer(Uri stepUri) {
         if (mExoPlayer == null) {
@@ -143,7 +170,7 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
                     fullScreen.putExtra(CURRENT_POSITION, movieCurrentPosition);
                     fullScreen.putExtra(CHOSEN_STEP_POSITION, position);
 
-                    if(!currentStep.getVideo().isEmpty()) {
+                    if (!currentStep.getVideo().isEmpty()) {
                         fullScreen.putExtra(CURRENT_STEP, currentStep.getVideo());
                     }
                     fullScreen.putExtra(CURRENT_STEP, currentStep.getThumbnailUrl());
@@ -237,13 +264,16 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
     }
 
     @Override
-    public void onPlayerError(ExoPlaybackException error) {}
+    public void onPlayerError(ExoPlaybackException error) {
+    }
 
     @Override
-    public void onPositionDiscontinuity() {}
+    public void onPositionDiscontinuity() {
+    }
 
     @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {}
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+    }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
@@ -251,5 +281,6 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
     }
 
     @Override
-    public void onLoadingChanged(boolean isLoading) {}
+    public void onLoadingChanged(boolean isLoading) {
+    }
 }

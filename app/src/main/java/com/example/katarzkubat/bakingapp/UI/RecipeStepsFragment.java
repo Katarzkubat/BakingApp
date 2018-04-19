@@ -32,6 +32,8 @@ public class RecipeStepsFragment extends Fragment {
     StepsAdapter stepsAdapter;
     public static final String CHOSEN_STEP_POSITION = "position";
     public static final String STEPS = "steps";
+    public final static String TWO_PANE = "twoPane";
+
     @BindView(R.id.recipe_steps_recycler) RecyclerView stepsRecycler;
 
 
@@ -42,7 +44,7 @@ public class RecipeStepsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.recipe_details_steps_fragment, container, false);
         Unbinder unbinder = ButterKnife.bind(this, rootView);
@@ -50,6 +52,7 @@ public class RecipeStepsFragment extends Fragment {
         stepsAdapter = new StepsAdapter(getContext(), this, steps);
 
         recipes = getArguments().getParcelable(SINGLE_RECIPE);
+        boolean twoPane = getArguments().getBoolean(TWO_PANE);
 
         stepsRecycler.setAdapter(stepsAdapter);
 

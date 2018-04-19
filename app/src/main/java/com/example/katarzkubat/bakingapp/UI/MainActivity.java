@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recipesRecycler;
     int widgetPosition;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,17 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        recipesRecycler.setLayoutManager(new LinearLayoutManager(this));
+        if (findViewById(R.id.phone_layout) != null) {
+            recipesRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        } else {
+
+            GridLayoutManager layoutManager = new GridLayoutManager
+                    (this, 2, GridLayoutManager.VERTICAL, false);
+            recipesRecycler.setLayoutManager(layoutManager);
+
+            recipesRecycler.setHasFixedSize(true);
+        }
 
         recipesAdapter = new RecipesAdapter(this);
 
@@ -84,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     Recipes singleRecipe = recipes.get(widgetPosition);
                     Intent recipeDetail = new Intent(getApplicationContext(), RecipeDetailsActivity.class);
                     recipeDetail.putExtra(SINGLE_RECIPE, singleRecipe);
+                    recipeDetail.putExtra("widgetPosition", widgetPosition);
                     startActivity(recipeDetail);
                     widgetPosition = -1;
                     finish();
