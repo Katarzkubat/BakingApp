@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesAdapterViewHolder> {
 
-    public static final String SINGLE_RECIPE = "recipe" ;
+    public static final String SINGLE_RECIPE = "singleRecipe" ;
     private ArrayList<Recipes> recipes = new ArrayList<>();
 
     private final Context context;

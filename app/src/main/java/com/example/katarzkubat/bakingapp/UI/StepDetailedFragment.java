@@ -1,5 +1,6 @@
 package com.example.katarzkubat.bakingapp.UI;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -44,8 +45,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-import static com.example.katarzkubat.bakingapp.Adapters.RecipesAdapter.SINGLE_RECIPE;
-
 public class StepDetailedFragment extends Fragment implements ExoPlayer.EventListener {
 
     private SimpleExoPlayer mExoPlayer;
@@ -57,12 +56,19 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
     private Steps currentStep;
     private long movieCurrentPosition;
     private int position;
+    private boolean twoPane;
+    private Recipes singleRecipe;
+    private Uri stepUri;
+
+    OnPlayerPause playerCallback;
+    RecipeStepsFragment.OnItemClickListener mCallback;
 
     public static final String CURRENT_POSITION = "movieCurrentPosition";
     public static final String CHOSEN_STEP_POSITION = "position";
     public static final String STEPS = "steps";
     public static final String CURRENT_STEP = "currentStep";
     public final static String TWO_PANE = "twoPane";
+    public final static String SINGLE_RECIPE = "singleRecipe";
 
     @BindView(R.id.step_details_button_next)
     Button nextButton;
@@ -80,45 +86,60 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
     public StepDetailedFragment() {
     }
 
+    public interface OnPlayerPause {
+        void setMovieCurrentPosition(long movieTime);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-       /* if(savedInstanceState != null){
-            movieCurrentPosition = savedInstanceState.getLong(CURRENT_POSITION);
-            position = savedInstanceState.getInt(CHOSEN_STEP_POSITION);
-        } */
-
-        //przy rotowaniu pozycja cofa się o 1 - jak jest zdjęcie
-        //film cofa się do 0  - trzymanie pozycji filmu
-
         View rootView = inflater.inflate(R.layout.step_detailed_fragment, container, false);
-        Recipes recipe = getArguments().getParcelable(SINGLE_RECIPE);
-        boolean twoPane = getArguments().getBoolean(TWO_PANE);
-
-        if (!twoPane) {
-            position = getArguments().getInt(CHOSEN_STEP_POSITION);
-            steps = getArguments().getParcelableArrayList(STEPS);
-        } else {
-            position = 0;
-            steps = recipe.getSteps();
-        }
-        currentStep = steps.get(position);
-
-        movieCurrentPosition = getArguments().getLong(CURRENT_POSITION, 0);
 
         Unbinder unbinder = ButterKnife.bind(this, rootView);
+
+        singleRecipe = getArguments().getParcelable(SINGLE_RECIPE);
+        twoPane = getArguments().getBoolean(TWO_PANE);
+        steps = getArguments().getParcelableArrayList(STEPS);
+
+        if (twoPane) {
+            position = 0;
+            assert singleRecipe != null;
+            steps = singleRecipe.getSteps();
+
+            if (savedInstanceState != null && savedInstanceState.getInt(CHOSEN_STEP_POSITION) > -1) {
+                position = savedInstanceState.getInt(CHOSEN_STEP_POSITION);
+                savedInstanceState.putInt(CHOSEN_STEP_POSITION, -1);
+
+            } else if (getArguments().getInt(CHOSEN_STEP_POSITION) > 0) {
+                position = getArguments().getInt(CHOSEN_STEP_POSITION);
+            }
+
+        } else {
+            position = getArguments().getInt(CHOSEN_STEP_POSITION);
+            steps = getArguments().getParcelableArrayList(STEPS);
+            assert steps != null;
+        }
+
+        currentStep = steps.get(position);
+
+        if (savedInstanceState != null) {
+            movieCurrentPosition = savedInstanceState.getLong(CURRENT_POSITION);
+
+        } else {
+            movieCurrentPosition = getArguments().getLong(CURRENT_POSITION, 0);
+        }
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                nextStep(position);
+                nextStep();
             }
         });
 
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                previousStep(position);
+                previousStep();
             }
         });
 
@@ -132,7 +153,7 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
             mPlayerView.setVisibility(View.INVISIBLE);
             image.setImageDrawable(cakeDrawable);
             image.setVisibility(View.VISIBLE);
-            Toast.makeText(getContext(), "Nice cake image instead of video", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Nice cake image instead of video", Toast.LENGTH_SHORT).show();
         }
 
         initializeMediaSession();
@@ -140,12 +161,15 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
         return rootView;
     }
 
-  /*  @Override
-    public void onSaveInstanceState(Bundle currentState) {
-        super.onSaveInstanceState(currentState);
-        currentState.putLong(CURRENT_POSITION, movieCurrentPosition);
-        currentState.putInt(CHOSEN_STEP_POSITION, position);
-    } */
+    @Override
+    public void onSaveInstanceState(Bundle savedState) {
+
+        super.onSaveInstanceState(savedState);
+
+        savedState.putLong(CURRENT_POSITION, movieCurrentPosition);
+        savedState.putInt(CHOSEN_STEP_POSITION, position);
+
+    }
 
     private void initializePlayer(Uri stepUri) {
         if (mExoPlayer == null) {
@@ -153,6 +177,7 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
             LoadControl loadControl = new DefaultLoadControl();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
             mPlayerView.setPlayer(mExoPlayer);
+
 
             String userAgent = Util.getUserAgent(getContext(), "BakingApp");
             MediaSource mediaSource = new ExtractorMediaSource(stepUri, new DefaultDataSourceFactory(
@@ -169,11 +194,14 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
                     Intent fullScreen = new Intent(getContext(), FullscreenActivity.class);
                     fullScreen.putExtra(CURRENT_POSITION, movieCurrentPosition);
                     fullScreen.putExtra(CHOSEN_STEP_POSITION, position);
+                    fullScreen.putExtra(TWO_PANE, twoPane);
+                    fullScreen.putExtra(SINGLE_RECIPE, singleRecipe);
 
                     if (!currentStep.getVideo().isEmpty()) {
                         fullScreen.putExtra(CURRENT_STEP, currentStep.getVideo());
+                    } else {
+                        fullScreen.putExtra(CURRENT_STEP, currentStep.getThumbnailUrl());
                     }
-                    fullScreen.putExtra(CURRENT_STEP, currentStep.getThumbnailUrl());
                     fullScreen.putParcelableArrayListExtra(STEPS, steps);
                     startActivity(fullScreen);
                 }
@@ -181,34 +209,53 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
         }
     }
 
-    private void nextStep(int position) {
+    private void nextStep() {
         if (position < steps.size() - 1) {
             position++;
-            Intent nextIntent = new Intent(getContext(), StepDetailedActivity.class);
-            nextIntent.putExtra(CHOSEN_STEP_POSITION, position);
-            nextIntent.putExtra(STEPS, steps);
-            startActivity(nextIntent);
+            if (twoPane) {
+
+                mCallback.onItemSelected(position);
+
+            } else {
+
+                Intent nextIntent = new Intent(getContext(), StepDetailedActivity.class);
+                nextIntent.putExtra(CHOSEN_STEP_POSITION, position);
+                nextIntent.putExtra(STEPS, steps);
+                startActivity(nextIntent);
+            }
         } else {
             Toast.makeText(getContext(), "There is no more steps - Cake is ready", Toast.LENGTH_SHORT).show();
         }
+
     }
 
-    private void previousStep(int position) {
+    private void previousStep() {
         if (position <= steps.size() - 1 && position > 0) {
             position--;
-            Intent previousIntent = new Intent(getContext(), StepDetailedActivity.class);
-            previousIntent.putExtra(CHOSEN_STEP_POSITION, position);
-            previousIntent.putExtra(STEPS, steps);
-            startActivity(previousIntent);
+
+            if(twoPane) {
+                mCallback.onItemSelected(position);
+            } else {
+                Intent previousIntent = new Intent(getContext(), StepDetailedActivity.class);
+                previousIntent.putExtra(CHOSEN_STEP_POSITION, position);
+                previousIntent.putExtra(STEPS, steps);
+                startActivity(previousIntent);
+            }
         } else {
             Toast.makeText(getContext(), "Start with introduction", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void releasePlayer() {
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if (null != mExoPlayer) {
+            movieCurrentPosition = mExoPlayer.getCurrentPosition();
+            if (twoPane) {
+                playerCallback.setMovieCurrentPosition(movieCurrentPosition);
+            }
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     @Override
@@ -216,6 +263,18 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
         super.onDestroy();
         releasePlayer();
         mMediaSession.setActive(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initializePlayer(stepUri);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
     }
 
     @Override
@@ -282,5 +341,18 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            playerCallback = (OnPlayerPause) context;
+            mCallback = (RecipeStepsFragment.OnItemClickListener) context;
+
+        } catch (ClassCastException e) {
+
+        }
     }
 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.katarzkubat.bakingapp.Model.Recipes;
 import com.example.katarzkubat.bakingapp.Model.Steps;
 import com.example.katarzkubat.bakingapp.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -28,21 +29,21 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.katarzkubat.bakingapp.UI.StepDetailedFragment.CURRENT_STEP;
-
 public class FullscreenActivity extends AppCompatActivity {
 
     private SimpleExoPlayer mExoPlayer;
-   // private SimpleExoPlayerView mPlayerView;
     private View mContentView;
     private long movieCurrentPosition;
     private int position;
     private ArrayList<Steps> steps;
+    private boolean twoPane;
+    private Recipes singleRecipe;
     public static final String CURRENT_POSITION = "movieCurrentPosition";
     public static final String CHOSEN_STEP_POSITION = "position";
     public static final String STEPS = "steps";
     public static final String CURRENT_STEP = "currentStep";
     public final static String TWO_PANE = "twoPane";
+    public final static String SINGLE_RECIPE = "singleRecipe";
 
     @BindView(R.id.step_details_player_fullscreen)
     SimpleExoPlayerView mPlayerView;
@@ -55,7 +56,6 @@ public class FullscreenActivity extends AppCompatActivity {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
@@ -72,10 +72,11 @@ public class FullscreenActivity extends AppCompatActivity {
 
         movieCurrentPosition = getMovieIntent.getLongExtra(CURRENT_POSITION, 0);
         position = getMovieIntent.getIntExtra(CHOSEN_STEP_POSITION, 0);
+        twoPane = getMovieIntent.getBooleanExtra(TWO_PANE, false);
+        singleRecipe = getMovieIntent.getParcelableExtra(SINGLE_RECIPE);
 
         ButterKnife.bind(this);
 
-       // mPlayerView = (SimpleExoPlayerView) findViewById(R.id.step_details_player_fullscreen);
         initializePlayer(stepUri);
     }
 
@@ -99,13 +100,18 @@ public class FullscreenActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     movieCurrentPosition = mExoPlayer.getCurrentPosition();
 
-                    Intent screenBack = new Intent(FullscreenActivity.this, StepDetailedActivity.class);
+                    Intent screenBack;
+                    if(twoPane) {
+                         screenBack = new Intent(FullscreenActivity.this, RecipeDetailsActivity.class);
+                    }else {
+                        screenBack = new Intent(FullscreenActivity.this, StepDetailedActivity.class);
+                    }
                     screenBack.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     screenBack.putExtra(CURRENT_POSITION, movieCurrentPosition);
                     screenBack.putExtra(CHOSEN_STEP_POSITION, position);
                     screenBack.putParcelableArrayListExtra(STEPS, steps);
+                    screenBack.putExtra(SINGLE_RECIPE, singleRecipe);
                     startActivity(screenBack);
-
                 }
             });
         }

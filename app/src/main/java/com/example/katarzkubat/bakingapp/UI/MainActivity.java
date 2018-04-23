@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.katarzkubat.bakingapp.Adapters.RecipesAdapter.SINGLE_RECIPE;
-
 public class MainActivity extends AppCompatActivity {
 
     private RecipesAdapter recipesAdapter;
     ArrayList<Recipes> recipes;
+    public final static String SINGLE_RECIPE = "singleRecipe";
 
     @BindView(R.id.recipes_recycler)
     RecyclerView recipesRecycler;

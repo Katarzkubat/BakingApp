@@ -30,13 +30,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-import static com.example.katarzkubat.bakingapp.Adapters.RecipesAdapter.SINGLE_RECIPE;
-
 public class IngredientsFragment extends Fragment {
 
     IngredientsAdapter ingredientsAdapter;
     ArrayList<Ingredients> ingredients;
     Recipes recipes;
+    public final static String SINGLE_RECIPE = "singleRecipe";
     @BindView(R.id.ingredients_recycler) RecyclerView ingredientsRecycler;
     @BindView(R.id.recipe_label) TextView recipeLabel;
 

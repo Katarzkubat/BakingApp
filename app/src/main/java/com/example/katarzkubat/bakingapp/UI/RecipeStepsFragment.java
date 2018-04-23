@@ -22,25 +22,36 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-import static com.example.katarzkubat.bakingapp.Adapters.RecipesAdapter.SINGLE_RECIPE;
-
-
 public class RecipeStepsFragment extends Fragment {
 
     ArrayList<Steps> steps;
     Recipes recipes;
     StepsAdapter stepsAdapter;
+    private boolean twoPane;
     public static final String CHOSEN_STEP_POSITION = "position";
     public static final String STEPS = "steps";
     public final static String TWO_PANE = "twoPane";
+    public final static String SINGLE_RECIPE = "singleRecipe";
 
     @BindView(R.id.recipe_steps_recycler) RecyclerView stepsRecycler;
 
+    OnItemClickListener mCallback;
 
     public RecipeStepsFragment() {}
 
     public interface OnItemClickListener {
         void onItemSelected(int position);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mCallback = (OnItemClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString());
+        }
     }
 
     @Override
@@ -52,7 +63,7 @@ public class RecipeStepsFragment extends Fragment {
         stepsAdapter = new StepsAdapter(getContext(), this, steps);
 
         recipes = getArguments().getParcelable(SINGLE_RECIPE);
-        boolean twoPane = getArguments().getBoolean(TWO_PANE);
+        twoPane = getArguments().getBoolean(TWO_PANE);
 
         stepsRecycler.setAdapter(stepsAdapter);
 
@@ -64,9 +75,14 @@ public class RecipeStepsFragment extends Fragment {
 
     public void click(int position){
 
-        Intent openStepDetail = new Intent(getContext(), StepDetailedActivity.class);
-        openStepDetail.putParcelableArrayListExtra("steps", steps);
-        openStepDetail.putExtra(CHOSEN_STEP_POSITION, position);
-        getContext().startActivity(openStepDetail);
-    }
+        if(!twoPane) {
+
+            Intent openStepDetail = new Intent(getContext(), StepDetailedActivity.class);
+            openStepDetail.putParcelableArrayListExtra("steps", steps);
+            openStepDetail.putExtra(CHOSEN_STEP_POSITION, position);
+            getContext().startActivity(openStepDetail);
+        }
+            mCallback.onItemSelected(position);
+
+        }
 }
