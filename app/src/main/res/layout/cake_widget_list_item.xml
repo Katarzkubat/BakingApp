@@ -7,8 +7,10 @@
     android:id="@+id/widgetItemContainer"
     android:layout_height="wrap_content">
 
+    <!-- ingredients item -->
+
     <TextView
-        android:id="@+id/widget_recipe_item_label"
+        android:id="@+id/widget_ingredient_item_label"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -18,7 +20,7 @@
         android:paddingTop="4dp"
         android:textAlignment="textStart"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         tools:text="@string/widget_item_label" />
 
 </LinearLayout>

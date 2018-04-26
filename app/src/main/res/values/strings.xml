@@ -10,7 +10,7 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="recipes_title_label">Recipes</string>
-    <string name="widget_item_label">Single recipe</string>
+    <string name="widget_item_label">Single Ingredient</string>
     <string name="next_step">Next</string>
     <string name="exo_player_imgview">Exo imgview</string>
     <string name="todo">TODO</string>
@@ -26,4 +26,5 @@
     <string name="previous_step">Previous</string>
     <string name="home">Home</string>
     <string name="cakeimg">string/image_description</string>
+    <string name="widget_chosen_position">widgetChosenPostion</string>
 </resources>

@@ -27,4 +27,11 @@
         tools:text="@string/appwidget_text"
         tools:listitem="@layout/cake_widget_list_item"/>
 
+    <!-- <LinearLayout
+        android:id="@+id/ll_recipe_widget_ingredient_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:listitem="@layout/widget_list_item"-->
+
 </LinearLayout>
