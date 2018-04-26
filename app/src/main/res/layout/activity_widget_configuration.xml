@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recipes_radio_buttons"
+    android:layout_width="180dp"
+    android:layout_height="140dp"
+    android:layout_marginStart="16dp"
+    android:orientation="vertical">
+
+    <!--<RadioButton
+        android:id="@+id/radio_first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onRadioButtonClicked"
+        tools:text="@string/recipes_title_label" />
+
+    <RadioButton
+        android:id="@+id/radio_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onRadioButtonClicked"
+        tools:text="@string/recipes_title_label" />
+
+    <RadioButton
+        android:id="@+id/radio_third"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onRadioButtonClicked"
+        tools:text="@string/recipes_title_label" />
+
+    <RadioButton
+        android:id="@+id/radio_fourth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onRadioButtonClicked"
+        tools:text="@string/recipes_title_label" />-->
+</RadioGroup>
