@@ -7,44 +7,33 @@ import java.util.ArrayList;
 
 public class Recipes implements Parcelable {
 
-    private String name;
     private int id;
+    private String name;
     private ArrayList<Ingredients> ingredients;
-    private String image;
     private ArrayList<Steps> steps;
+    private int servings;
+    private String image;
 
-    public Recipes(){}
-    public Recipes(String name){
-        this.name = name;
-    }
 
-    public Recipes(String name, int id, ArrayList<Ingredients> ingredients, String image, ArrayList<Steps> steps) {
-        this.name = name;
+    public Recipes() {}
+
+    public Recipes(int id, String name, ArrayList<Ingredients> ingredients, ArrayList<Steps> steps, int servings, String image) {
         this.id = id;
+        this.name = name;
         this.ingredients = ingredients;
-        this.image = image;
         this.steps = steps;
+        this.servings = servings;
+        this.image = image;
     }
 
-    protected Recipes(Parcel in) {
-        name = in.readString();
+    private Recipes(Parcel in) {
         id = in.readInt();
+        name = in.readString();
         ingredients = in.createTypedArrayList(Ingredients.CREATOR);
-        image = in.readString();
         steps = in.createTypedArrayList(Steps.CREATOR);
+        servings = in.readInt();
+        image = in.readString();
     }
-
-    public static final Creator<Recipes> CREATOR = new Creator<Recipes>() {
-        @Override
-        public Recipes createFromParcel(Parcel in) {
-            return new Recipes(in);
-        }
-
-        @Override
-        public Recipes[] newArray(int size) {
-            return new Recipes[size];
-        }
-    };
 
     public String getName() {
         return name;
@@ -66,26 +55,35 @@ public class Recipes implements Parcelable {
         return steps;
     }
 
+    public int getServings() {
+        return servings;
+    }
+
+    public static final Creator<Recipes> CREATOR = new Creator<Recipes>() {
+        @Override
+        public Recipes createFromParcel(Parcel in) {
+            return new Recipes(in);
+        }
+
+        @Override
+        public Recipes[] newArray(int size) {
+            return new Recipes[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(name);
+        parcel.writeTypedList(ingredients);
+        parcel.writeTypedList(steps);
+        parcel.writeInt(servings);
+        parcel.writeString(image);
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(name);
-        parcel.writeInt(id);
-        parcel.writeTypedList(ingredients);
-        parcel.writeString(image);
-        parcel.writeTypedList(steps);
-    }
 }
 
-/*
- "id":1,
-      "name":"Nutella Pie",
-      "ingredients":[  ],
-      "steps":[  ],
-      "servings":8,
-      "image":""
- */

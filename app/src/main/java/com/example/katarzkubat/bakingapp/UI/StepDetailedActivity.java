@@ -10,14 +10,13 @@ import android.view.MenuItem;
 import com.example.katarzkubat.bakingapp.Model.Steps;
 import com.example.katarzkubat.bakingapp.R;
 
-
 import java.util.ArrayList;
 
 public class StepDetailedActivity extends AppCompatActivity {
 
-    public static final String CURRENT_POSITION = "movieCurrentPosition";
-    public static final String CHOSEN_STEP_POSITION = "position";
-    public static final String STEPS = "steps";
+    private static final String CURRENT_POSITION = "movieCurrentPosition";
+    private static final String CHOSEN_STEP_POSITION = "position";
+    private static final String STEPS = "steps";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

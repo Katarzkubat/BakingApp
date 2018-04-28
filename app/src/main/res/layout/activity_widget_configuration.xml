@@ -7,31 +7,4 @@
     android:layout_marginStart="16dp"
     android:orientation="vertical">
 
-    <!--<RadioButton
-        android:id="@+id/radio_first"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onRadioButtonClicked"
-        tools:text="@string/recipes_title_label" />
-
-    <RadioButton
-        android:id="@+id/radio_second"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onRadioButtonClicked"
-        tools:text="@string/recipes_title_label" />
-
-    <RadioButton
-        android:id="@+id/radio_third"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onRadioButtonClicked"
-        tools:text="@string/recipes_title_label" />
-
-    <RadioButton
-        android:id="@+id/radio_fourth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onRadioButtonClicked"
-        tools:text="@string/recipes_title_label" />-->
 </RadioGroup>

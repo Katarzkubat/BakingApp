@@ -1,10 +1,7 @@
 package com.example.katarzkubat.bakingapp.Utilities;
 
-import android.util.Log;
 
-import com.example.katarzkubat.bakingapp.Model.Ingredients;
 import com.example.katarzkubat.bakingapp.Model.Recipes;
-import com.example.katarzkubat.bakingapp.Model.Steps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

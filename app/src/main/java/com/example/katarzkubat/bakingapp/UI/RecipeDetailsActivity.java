@@ -1,17 +1,13 @@
 package com.example.katarzkubat.bakingapp.UI;
 
 import android.content.Intent;
-import android.os.PersistableBundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.example.katarzkubat.bakingapp.Adapters.StepsAdapter;
 import com.example.katarzkubat.bakingapp.Model.Ingredients;
 import com.example.katarzkubat.bakingapp.Model.Recipes;
 import com.example.katarzkubat.bakingapp.Model.Steps;

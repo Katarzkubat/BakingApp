@@ -1,26 +1,21 @@
 package com.example.katarzkubat.bakingapp;
 
+import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RemoteViews;
 
-import com.example.katarzkubat.bakingapp.Adapters.IngredientsAdapter;
 import com.example.katarzkubat.bakingapp.Model.Recipes;
-import com.example.katarzkubat.bakingapp.UI.MainActivity;
 import com.example.katarzkubat.bakingapp.Utilities.NetworkUtils;
 import com.example.katarzkubat.bakingapp.Utilities.OpenRecipeJsonUtils;
+import com.example.katarzkubat.bakingapp.Widget.CakeWidgetProvider;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,10 +30,9 @@ public class WidgetConfigurationActivity extends AppCompatActivity {
     RadioGroup radioGroup;
 
     public final static String EXTRA_APPWIDGET_ID = "widgetId";
-    int widgetId;
+    private int widgetId;
     Context context;
-    ArrayList<Recipes> recipes;
-    Recipes singleRecipe;
+    private ArrayList<Recipes> recipes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +53,11 @@ public class WidgetConfigurationActivity extends AppCompatActivity {
             finish();
         }
 
-        recipes = new ArrayList<Recipes>();
-
-        Log.d("WIDGET", "widget " + widgetId);
-
+        recipes = new ArrayList<>();
         new PopulateRecipes().execute();
-        Log.d("WIDGET", "populaateRecipe");
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class PopulateRecipes extends AsyncTask<String, Void, ArrayList<Recipes>> {
 
         @Override
@@ -97,21 +88,28 @@ public class WidgetConfigurationActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Recipes> recipes) {
 
             if (recipes != null) {
+                int widgetChosenPosition = PreferenceManager
+                        .getDefaultSharedPreferences(WidgetConfigurationActivity.this)
+                        .getInt("widgetChosenPosition", -1);
+
                 setRecipes(recipes);
                 RadioGroup radioGroup = findViewById(R.id.recipes_radio_buttons);
                 for (int position = 0; position < recipes.size(); position++) {
 
-                    RadioButton rdbtn = new RadioButton(WidgetConfigurationActivity.this);
-                    rdbtn.setId(position);
-                    rdbtn.setText(recipes.get(position).getName());
-                    radioGroup.addView(rdbtn);
+                    RadioButton radioButton = new RadioButton(WidgetConfigurationActivity.this);
+                    radioButton.setId(position);
+                    radioButton.setText(recipes.get(position).getName());
+
+                    if(widgetChosenPosition == position){
+                        radioButton.setChecked(true);
+                    }
+
+                    radioGroup.addView(radioButton);
                 }
 
                 radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                        Log.d("onCheckedChanged", "checkedId: "+checkedId);
                         chooseRecipe(checkedId);
                     }
                 });
@@ -119,12 +117,13 @@ public class WidgetConfigurationActivity extends AppCompatActivity {
         }
     }
 
-    public void setRecipes(ArrayList<Recipes> queredData){
+    private void setRecipes(ArrayList<Recipes> queredData){
         recipes = queredData;
     }
 
-    public void chooseRecipe(int position){
-        singleRecipe = recipes.get(position);
+    private void chooseRecipe(int position){
+
+        Recipes singleRecipe = recipes.get(position);
 
         RemoteViews views = new RemoteViews(getPackageName(), R.layout.cake_widget_layout);
 
@@ -132,15 +131,10 @@ public class WidgetConfigurationActivity extends AppCompatActivity {
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.widget_list);
         appWidgetManager.updateAppWidget(widgetId,
                 CakeWidgetProvider.buildRemoteViews(getApplicationContext(),
-                        widgetId, singleRecipe));
-
-       /* SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(getString(R.string.widget_chosen_position), position);
-        editor.commit(); */
+                        widgetId));
 
         PreferenceManager.getDefaultSharedPreferences(this).edit()
-                .putInt("widgetChosenPosition", position).commit();
+                .putInt("widgetChosenPosition", position).apply();
 
         Intent resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);

@@ -2,15 +2,12 @@ package com.example.katarzkubat.bakingapp.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.example.katarzkubat.bakingapp.Model.Ingredients;
 import com.example.katarzkubat.bakingapp.R;
-
 import java.util.ArrayList;
 
 import butterknife.BindView;

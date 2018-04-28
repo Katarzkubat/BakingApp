@@ -1,7 +1,12 @@
 package com.example.katarzkubat.bakingapp.UI;
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,6 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.example.katarzkubat.bakingapp.Adapters.RecipesAdapter;
+import com.example.katarzkubat.bakingapp.IdlingResource.RecipeLoader;
+import com.example.katarzkubat.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.example.katarzkubat.bakingapp.Model.Recipes;
 import com.example.katarzkubat.bakingapp.R;
 import com.example.katarzkubat.bakingapp.Utilities.NetworkUtils;
@@ -22,22 +29,26 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecipeLoader.RecipeCallback {
 
     private RecipesAdapter recipesAdapter;
     ArrayList<Recipes> recipes;
     public final static String SINGLE_RECIPE = "singleRecipe";
-
-    @BindView(R.id.recipes_recycler)
-    RecyclerView recipesRecycler;
     int widgetPosition;
 
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
+    @BindView(R.id.recipes_recycler) RecyclerView recipesRecycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ((SimpleIdlingResource)getIdlingResource()).setIdleState(false);
+
         setContentView(R.layout.activity_main);
-        widgetPosition = getIntent().getIntExtra("widgetPosition",-1);
+        widgetPosition = getIntent().getIntExtra("widgetPosition", -1);
 
         ButterKnife.bind(this);
 
@@ -60,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
         new PopulateRecipes().execute();
     }
 
+    @Override
+    public void onDone(ArrayList<Recipes> recipes) {
+        recipesAdapter.setRecipes(recipes);
+    }
+
+    @SuppressLint("StaticFieldLeak")
     private class PopulateRecipes extends AsyncTask<String, Void, ArrayList<Recipes>> {
 
         @Override
@@ -89,20 +106,16 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Recipes> recipes) {
             if (recipes!= null) {
-
-                if(widgetPosition > -1){
-
-                    Recipes singleRecipe = recipes.get(widgetPosition);
-                    Intent recipeDetail = new Intent(getApplicationContext(), RecipeDetailsActivity.class);
-                    recipeDetail.putExtra(SINGLE_RECIPE, singleRecipe);
-                    recipeDetail.putExtra("widgetPosition", widgetPosition);
-                    startActivity(recipeDetail);
-                    widgetPosition = -1;
-                    finish();
-                } else {
-                    recipesAdapter.setRecipes(recipes);
-                }
+                recipesAdapter.setRecipes(recipes);
             }
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((SimpleIdlingResource)getIdlingResource()).setIdleState(true);
+                }
+            }, 3000);
         }
     }
 
@@ -110,5 +123,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         new PopulateRecipes().execute();
+    }
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
     }
 }

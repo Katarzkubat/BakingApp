@@ -27,4 +27,6 @@
     <string name="home">Home</string>
     <string name="cakeimg">string/image_description</string>
     <string name="widget_chosen_position">widgetChosenPostion</string>
+    <string name="change_configuration">Change</string>
+    <string name="toast_msg">Nice cake image instead of video</string>
 </resources>

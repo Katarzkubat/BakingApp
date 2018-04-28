@@ -1,6 +1,5 @@
 package com.example.katarzkubat.bakingapp.Utilities;
 
-import android.net.Uri;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +10,7 @@ import java.util.Scanner;
 
 public class NetworkUtils {
 
-    public static String RECIPES_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+    public static final String RECIPES_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     public static String getResponseFromHttpUrl(java.net.URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

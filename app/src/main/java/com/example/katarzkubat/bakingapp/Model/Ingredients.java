@@ -58,10 +58,4 @@ public class Ingredients implements Parcelable{
         parcel.writeString(measure);
         parcel.writeString(ingredient);
     }
-
-    /*
-"quantity":2,
-            "measure":"CUP",
-            "ingredient":"Graham Cracker crumbs"
- */
 }

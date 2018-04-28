@@ -22,7 +22,7 @@
         <!-- activity android:name=".UI.IngredientsActivity"></activity -->
         <activity android:name=".UI.StepDetailedActivity" />
 
-        <receiver android:name=".CakeWidgetProvider">
+        <receiver android:name=".Widget.CakeWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -33,7 +33,7 @@
         </receiver>
 
         <service
-            android:name=".Utilities.RemoteListService"
+            android:name=".Widget.RemoteListService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity

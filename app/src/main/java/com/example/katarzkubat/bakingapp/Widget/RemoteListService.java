@@ -1,26 +1,23 @@
-package com.example.katarzkubat.bakingapp.Utilities;
+package com.example.katarzkubat.bakingapp.Widget;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Bundle;
+
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.example.katarzkubat.bakingapp.CakeWidgetProvider;
 import com.example.katarzkubat.bakingapp.Model.Ingredients;
 import com.example.katarzkubat.bakingapp.Model.Recipes;
 import com.example.katarzkubat.bakingapp.R;
-import com.example.katarzkubat.bakingapp.UI.MainActivity;
+import com.example.katarzkubat.bakingapp.Utilities.NetworkUtils;
+import com.example.katarzkubat.bakingapp.Utilities.OpenRecipeJsonUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 
 public class RemoteListService extends RemoteViewsService {
 
@@ -31,29 +28,31 @@ public class RemoteListService extends RemoteViewsService {
 
     public class RemoteListViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-        ArrayList<Ingredients> ingredients = new ArrayList<Ingredients>();
-        Recipes singleRecipe;
-        private Context mContext;
+        private ArrayList<Ingredients> ingredients = new ArrayList<>();
+        ArrayList<Recipes> recipes = new ArrayList<>();
+        private final Context mContext;
         int widgetId;
+        int widgetChosenPosition;
 
-        public RemoteListViewsFactory(Context context, Intent intent) {
+        RemoteListViewsFactory(Context context, Intent intent) {
             mContext = context;
             Log.d("RemoteListViewsFactory", "intent: "+intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,-1));
-
         }
 
         @Override
         public void onCreate() {
-           // SharedPreferences sharedPref = mContext.getSharedPreferences();
-           // int widgetChosenPosition = sharedPref.getInt(getString(R.string.widget_chosen_position), 0);
+
+            widgetChosenPosition = PreferenceManager
+                    .getDefaultSharedPreferences(mContext).getInt("widgetChosenPosition", 0);
+            Log.d("widgetChosenPosition", "" + widgetChosenPosition);
+
         }
 
         @Override
         public RemoteViews getViewAt(int position) {
 
-            ingredients = singleRecipe.getIngredients();
-
-            RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.cake_widget_layout);
+            RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.cake_widget_list_item);
+            Log.d("Ingredient",ingredients.get(position).getIngredient());
             remoteViews.setTextViewText(R.id.widget_ingredient_item_label, ingredients.get(position).getIngredient());
 
             return remoteViews;
@@ -61,7 +60,27 @@ public class RemoteListService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
+            widgetChosenPosition = PreferenceManager
+                    .getDefaultSharedPreferences(mContext).getInt("widgetChosenPosition", 0);
+            Log.d("widgetChosenPosition", "" + widgetChosenPosition);
+            URL recipeRequestUrl = null;
 
+            try {
+                recipeRequestUrl = NetworkUtils.buildRecipeUrl();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            try {
+                String jsonResponse = NetworkUtils
+                        .getResponseFromHttpUrl(recipeRequestUrl);
+                recipes = OpenRecipeJsonUtils
+                        .getRecipesFromJson(jsonResponse);
+                Log.d("RecipeName", recipes.get(widgetChosenPosition).getName());
+                ingredients = recipes.get(widgetChosenPosition).getIngredients();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

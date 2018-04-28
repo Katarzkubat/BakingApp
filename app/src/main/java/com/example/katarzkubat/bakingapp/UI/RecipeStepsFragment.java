@@ -24,18 +24,16 @@ import butterknife.Unbinder;
 
 public class RecipeStepsFragment extends Fragment {
 
-    ArrayList<Steps> steps;
-    Recipes recipes;
-    StepsAdapter stepsAdapter;
+    private ArrayList<Steps> steps;
     private boolean twoPane;
-    public static final String CHOSEN_STEP_POSITION = "position";
+    private static final String CHOSEN_STEP_POSITION = "position";
     public static final String STEPS = "steps";
-    public final static String TWO_PANE = "twoPane";
-    public final static String SINGLE_RECIPE = "singleRecipe";
+    private final static String TWO_PANE = "twoPane";
+    private final static String SINGLE_RECIPE = "singleRecipe";
 
     @BindView(R.id.recipe_steps_recycler) RecyclerView stepsRecycler;
 
-    OnItemClickListener mCallback;
+    private OnItemClickListener mCallback;
 
     public RecipeStepsFragment() {}
 
@@ -54,15 +52,16 @@ public class RecipeStepsFragment extends Fragment {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.recipe_details_steps_fragment, container, false);
         Unbinder unbinder = ButterKnife.bind(this, rootView);
 
-        stepsAdapter = new StepsAdapter(getContext(), this, steps);
+        StepsAdapter stepsAdapter = new StepsAdapter(getContext(), this, steps);
 
-        recipes = getArguments().getParcelable(SINGLE_RECIPE);
+        Recipes recipes = getArguments().getParcelable(SINGLE_RECIPE);
         twoPane = getArguments().getBoolean(TWO_PANE);
 
         stepsRecycler.setAdapter(stepsAdapter);
@@ -73,9 +72,12 @@ public class RecipeStepsFragment extends Fragment {
         return rootView;
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void click(int position){
-
+        Log.d("recipeStepsFragmentClik","click");
         if(!twoPane) {
+Log.d("recipeStepsFragmentClik","not two pane");
+Log.d("recipeStepsFragmentClik","step.size: "+steps.size());
 
             Intent openStepDetail = new Intent(getContext(), StepDetailedActivity.class);
             openStepDetail.putParcelableArrayListExtra("steps", steps);

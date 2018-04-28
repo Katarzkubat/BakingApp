@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +48,6 @@ import butterknife.Unbinder;
 public class StepDetailedFragment extends Fragment implements ExoPlayer.EventListener {
 
     private SimpleExoPlayer mExoPlayer;
-    //private SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
     private static final String TAG = StepDetailedActivity.class.getSimpleName();
@@ -60,15 +59,15 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
     private Recipes singleRecipe;
     private Uri stepUri;
 
-    OnPlayerPause playerCallback;
-    RecipeStepsFragment.OnItemClickListener mCallback;
+    private OnPlayerPause playerCallback;
+    private RecipeStepsFragment.OnItemClickListener mCallback;
 
-    public static final String CURRENT_POSITION = "movieCurrentPosition";
-    public static final String CHOSEN_STEP_POSITION = "position";
-    public static final String STEPS = "steps";
-    public static final String CURRENT_STEP = "currentStep";
-    public final static String TWO_PANE = "twoPane";
-    public final static String SINGLE_RECIPE = "singleRecipe";
+    private static final String CURRENT_POSITION = "movieCurrentPosition";
+    private static final String CHOSEN_STEP_POSITION = "position";
+    private static final String STEPS = "steps";
+    private static final String CURRENT_STEP = "currentStep";
+    private final static String TWO_PANE = "twoPane";
+    private final static String SINGLE_RECIPE = "singleRecipe";
 
     @BindView(R.id.step_details_button_next)
     Button nextButton;
@@ -81,6 +80,7 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
     @BindView(R.id.cake_image)
     ImageView image;
     @BindDrawable(R.drawable.cake)
+
     Drawable cakeDrawable;
 
     public StepDetailedFragment() {
@@ -90,8 +90,9 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
         void setMovieCurrentPosition(long movieTime);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.step_detailed_fragment, container, false);
 
@@ -145,9 +146,9 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
 
         description.setText(currentStep.getDescription());
 
-        if (!currentStep.getVideo().isEmpty()) {
+        if (currentStep.getVideo() != null && !currentStep.getVideo().isEmpty()) {
             initializePlayer(Uri.parse(currentStep.getVideo()));
-        } else if (!currentStep.getThumbnailUrl().isEmpty()) {
+        } else if (currentStep.getThumbnailUrl() != null && !currentStep.getThumbnailUrl().isEmpty()) {
             initializePlayer(Uri.parse(currentStep.getThumbnailUrl()));
         } else {
             mPlayerView.setVisibility(View.INVISIBLE);
@@ -162,7 +163,7 @@ public class StepDetailedFragment extends Fragment implements ExoPlayer.EventLis
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedState) {
+    public void onSaveInstanceState(@NonNull Bundle savedState) {
 
         super.onSaveInstanceState(savedState);
 

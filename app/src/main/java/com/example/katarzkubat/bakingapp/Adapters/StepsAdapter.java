@@ -1,20 +1,16 @@
 package com.example.katarzkubat.bakingapp.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
 
 import com.example.katarzkubat.bakingapp.Model.Steps;
 import com.example.katarzkubat.bakingapp.R;
 import com.example.katarzkubat.bakingapp.UI.RecipeStepsFragment;
-import com.example.katarzkubat.bakingapp.UI.StepDetailedActivity;
 
 import java.util.ArrayList;
 
@@ -35,15 +31,16 @@ public class StepsAdapter extends
 
     }
 
+    @NonNull
     @Override
-    public StepsAdapter.RecipeDetailsAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StepsAdapter.RecipeDetailsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(context).inflate(R.layout.recipe_details_steps_list_item, parent, false);
         return new StepsAdapter.RecipesAdapterViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(StepsAdapter.RecipeDetailsAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull StepsAdapter.RecipeDetailsAdapterViewHolder holder, int position) {
 
         Steps singleStep = steps.get(position);
         holder.stepsLabel.setText(singleStep.getShortDescription());
