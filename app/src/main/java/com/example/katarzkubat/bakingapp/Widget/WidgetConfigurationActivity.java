@@ -1,4 +1,4 @@
-package com.example.katarzkubat.bakingapp;
+package com.example.katarzkubat.bakingapp.Widget;
 
 import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
@@ -10,12 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RemoteViews;
 
 import com.example.katarzkubat.bakingapp.Model.Recipes;
+import com.example.katarzkubat.bakingapp.R;
 import com.example.katarzkubat.bakingapp.Utilities.NetworkUtils;
 import com.example.katarzkubat.bakingapp.Utilities.OpenRecipeJsonUtils;
-import com.example.katarzkubat.bakingapp.Widget.CakeWidgetProvider;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -122,10 +121,6 @@ public class WidgetConfigurationActivity extends AppCompatActivity {
     }
 
     private void chooseRecipe(int position){
-
-        Recipes singleRecipe = recipes.get(position);
-
-        RemoteViews views = new RemoteViews(getPackageName(), R.layout.cake_widget_layout);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.widget_list);

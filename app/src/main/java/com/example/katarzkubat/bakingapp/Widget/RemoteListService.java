@@ -36,7 +36,6 @@ public class RemoteListService extends RemoteViewsService {
 
         RemoteListViewsFactory(Context context, Intent intent) {
             mContext = context;
-            Log.d("RemoteListViewsFactory", "intent: "+intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,-1));
         }
 
         @Override
@@ -44,7 +43,6 @@ public class RemoteListService extends RemoteViewsService {
 
             widgetChosenPosition = PreferenceManager
                     .getDefaultSharedPreferences(mContext).getInt("widgetChosenPosition", 0);
-            Log.d("widgetChosenPosition", "" + widgetChosenPosition);
 
         }
 
@@ -52,7 +50,6 @@ public class RemoteListService extends RemoteViewsService {
         public RemoteViews getViewAt(int position) {
 
             RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.cake_widget_list_item);
-            Log.d("Ingredient",ingredients.get(position).getIngredient());
             remoteViews.setTextViewText(R.id.widget_ingredient_item_label, ingredients.get(position).getIngredient());
 
             return remoteViews;
@@ -62,7 +59,6 @@ public class RemoteListService extends RemoteViewsService {
         public void onDataSetChanged() {
             widgetChosenPosition = PreferenceManager
                     .getDefaultSharedPreferences(mContext).getInt("widgetChosenPosition", 0);
-            Log.d("widgetChosenPosition", "" + widgetChosenPosition);
             URL recipeRequestUrl = null;
 
             try {
@@ -75,7 +71,6 @@ public class RemoteListService extends RemoteViewsService {
                         .getResponseFromHttpUrl(recipeRequestUrl);
                 recipes = OpenRecipeJsonUtils
                         .getRecipesFromJson(jsonResponse);
-                Log.d("RecipeName", recipes.get(widgetChosenPosition).getName());
                 ingredients = recipes.get(widgetChosenPosition).getIngredients();
 
             } catch (Exception e) {

@@ -2,6 +2,7 @@ package com.example.katarzkubat.bakingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Root;
@@ -9,7 +10,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.WindowManager;
 
-import com.example.katarzkubat.bakingapp.Model.Ingredients;
 import com.example.katarzkubat.bakingapp.Model.Steps;
 import com.example.katarzkubat.bakingapp.UI.StepDetailedActivity;
 
@@ -24,12 +24,9 @@ import java.util.ArrayList;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 
 @RunWith(AndroidJUnit4.class)
 public class StepDetailedActivityTest {
@@ -103,8 +100,17 @@ public class StepDetailedActivityTest {
     @Test
     public void Toast_ShowToast() {
 
-        onView(withText(R.string.toast_msg)).inRoot(new ToastMatcher())
-                .check(matches(isDisplayed()));
+        onView(withId(R.id.cake_image)).check(matches(isDisplayed()));
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onView(withText(R.string.toast_msg)).inRoot(new ToastMatcher())
+                        .check(matches(isDisplayed()));
+            }
+        }, 1000);
+
     }
 }
 

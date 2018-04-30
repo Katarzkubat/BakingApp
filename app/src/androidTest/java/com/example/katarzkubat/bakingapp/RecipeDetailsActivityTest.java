@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
-import android.support.test.espresso.intent.Intents;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -12,9 +11,7 @@ import com.example.katarzkubat.bakingapp.Model.Ingredients;
 import com.example.katarzkubat.bakingapp.Model.Recipes;
 import com.example.katarzkubat.bakingapp.Model.Steps;
 import com.example.katarzkubat.bakingapp.UI.RecipeDetailsActivity;
-import com.example.katarzkubat.bakingapp.UI.StepDetailedActivity;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,11 +46,6 @@ public class RecipeDetailsActivityTest {
                 }
             };
 
-    /*@Before
-    public void init() {
-        recipeDetailsActivityTestRule.getActivity()
-                .getSupportFragmentManager().beginTransaction();
-    }*/
 
    @Test
     public void Labels_DisplayText() {

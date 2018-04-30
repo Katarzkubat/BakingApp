@@ -74,10 +74,8 @@ public class RecipeStepsFragment extends Fragment {
 
     @SuppressWarnings("ConstantConditions")
     public void click(int position){
-        Log.d("recipeStepsFragmentClik","click");
+
         if(!twoPane) {
-Log.d("recipeStepsFragmentClik","not two pane");
-Log.d("recipeStepsFragmentClik","step.size: "+steps.size());
 
             Intent openStepDetail = new Intent(getContext(), StepDetailedActivity.class);
             openStepDetail.putParcelableArrayListExtra("steps", steps);

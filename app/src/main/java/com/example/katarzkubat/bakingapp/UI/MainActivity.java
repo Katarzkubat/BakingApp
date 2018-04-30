@@ -12,10 +12,8 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.example.katarzkubat.bakingapp.Adapters.RecipesAdapter;
-import com.example.katarzkubat.bakingapp.IdlingResource.RecipeLoader;
 import com.example.katarzkubat.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.example.katarzkubat.bakingapp.Model.Recipes;
 import com.example.katarzkubat.bakingapp.R;
@@ -29,7 +27,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements RecipeLoader.RecipeCallback {
+public class MainActivity extends AppCompatActivity {
 
     private RecipesAdapter recipesAdapter;
     ArrayList<Recipes> recipes;
@@ -69,11 +67,6 @@ public class MainActivity extends AppCompatActivity implements RecipeLoader.Reci
         recipesRecycler.setAdapter(recipesAdapter);
 
         new PopulateRecipes().execute();
-    }
-
-    @Override
-    public void onDone(ArrayList<Recipes> recipes) {
-        recipesAdapter.setRecipes(recipes);
     }
 
     @SuppressLint("StaticFieldLeak")

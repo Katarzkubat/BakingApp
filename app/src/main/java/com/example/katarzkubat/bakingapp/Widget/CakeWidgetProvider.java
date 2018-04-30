@@ -11,7 +11,6 @@ import android.widget.RemoteViews;
 import com.example.katarzkubat.bakingapp.Model.Recipes;
 import com.example.katarzkubat.bakingapp.R;
 import com.example.katarzkubat.bakingapp.UI.MainActivity;
-import com.example.katarzkubat.bakingapp.WidgetConfigurationActivity;
 
 
 public class CakeWidgetProvider extends AppWidgetProvider {
